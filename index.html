@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf8">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="data.js"></script>
+  <script type="text/javascript">
+    data.index = -1;
+    data.pontuacao = 0;
+    data.pontosFortes = [];
+    data.pontosFracos = [];
+
+    data.getObject = function(){
+      return this["quiz"][this.index];
+    }
+    var selecionado = -1;
+    data.terminar = function(){
+      var porc = (data.pontuacao/20)*100;
+      console.log("pontuacao" +data.pontuacao);
+      $("#final").html("Você está " + porc + "% preparado para o mercado do futuro!" );
+      console.log(data.pontosFortes);
+      console.log(data.pontosFracos);
+      if(data.pontosFortes.length>=1){
+        var saida = "";
+        for (var i = data.pontosFortes.length - 1; i >= 0; i--) {
+          saida += "<li class=\"list-group-item list-group-item-success\"> " + data.pontosFortes[i] + " </li>";
+        }
+        $("#pontosfortes").html(saida);
+      }else
+        $("#pontosF").hide();
+      saida = "";
+      if (data.pontosFracos.length>=1) {
+        for (var i = data.pontosFracos.length - 1; i >= 0; i--) {
+          saida += "<li class=\"list-group-item list-group-item-danger\"> " +data.pontosFracos[i] + " </li>";
+        }
+        $("#pontosfracos").html(saida);
+      }
+        
+      else
+        $("#pontosF2").hide();
+    }
+
+    data.carregar = function(){
+      data.index++;
+      
+      console.log(this.getObject()["questao"]);
+      $("#tit").html(this.getObject()["questao"]);
+      $("#btn1").html(this.getObject()["a"]);
+      $("#btn2").html(this.getObject()["b"]);
+      $("#btn3").html(this.getObject()["c"]);
+      $("#btn4").html(this.getObject()["d"]);
+      for(var i = 1; i<=4; i++){
+        console.log(i);
+        $("#btn" + i).on("click", function(){
+          selecionado = this.id.split('')[3];
+          console.log(selecionado);
+        });
+      }
+      selecionado = 0;
+      
+
+
+    }
+    
+  </script>
+
+<style>
+body, html {
+  height: 100%;
+  width: 100%;
+
+}
+
+#bg {
+  /* The image used */
+  background-image: url("elits1.png");
+
+  /* Full height */
+  height: 100%; 
+  display: none;
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+</style>
+</head>
+<body>
+
+<div id="bg"></div>
+
+<script type="text/javascript">
+  
+  $(document).ready(function(){
+    $("#bg").fadeIn(2000);
+    setTimeout(function(){$("#bg").hide(); $("#card1").show();}, 2000);
+    $("#btn11").click(function(){$("#card1").hide();$("#quiz").fadeIn(500); data.carregar();});
+    $("#btnok").click(function(){
+        console.log(selecionado);
+        if(selecionado == -1)
+          alert("selecione");
+        data.pontuacao += parseInt(data.getObject()["p"].toString().split('')[selecionado - 1]);
+        if(data.getObject()["p"].toString().split('')[selecionado - 1] > 2){
+          data.pontosFortes.push(data.getObject()["tema"]);
+          console.log(data.getObject()["tema"]);
+        }
+        else
+          data.pontosFracos.push(data.getObject()["tema"]);
+        $("#quiz").hide();
+        setTimeout(function(){
+          if(data.index < 4){
+            data.carregar();
+            $("#quiz").fadeIn();
+          }
+          else{
+            console.log(data.index);
+            data.terminar();
+            $("#terminar").fadeIn();
+          }
+
+          window.scrollTo(0, 0);
+          console.log(data.pontuacao);
+          
+        }, 100);
+
+
+      });
+  });
+
+
+</script>
+
+  <div id="card1" class="card" style="background-color: #606060; min-height: 95%; margin-right: 2.5%; margin-left: 2.5%; display: none; margin-top: 10px">
+    <div class="card-body">
+      <h1 class="card-title text-center" style="color: #fff; font-size: 35px">Você tem as características do profissional do futuro?</h1>
+      <div class="d-flex justify-content-center">
+        <img class="img-thumbnail " src="skills.jpg" style="width: 90%"></img>
+      </div>
+      <div class="d-flex justify-content-center">
+        <br><br><br>
+        <button type="button" id="btn11"class="btn btn-dark" style="font-size: 40px; margin: 20px; padding-right: 20px; padding-left: 20px">Descobrir</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="quiz" style="display: none;">
+    <div class="card" style="background-color: #606060; min-height: 95%; margin-right: 2.5%; margin-left: 2.5%; max-width: 100%">
+    <div class="card-body">
+      <h1 class="card-title text-center" style="color: #fff; font-size: 24px" id="tit"></h1>
+      <div class="btn-group-vertical" role="group">
+        <button type="button" id="btn1"class="btn btn-dark" style="margin-top: 10px;" ></button>
+          <button type="button" id="btn2"class="btn btn-dark" style="margin-top: 10px;"></button>
+          <button type="button" id="btn3"class="btn btn-dark"  style="margin-top: 10px;"></button>
+          <button type="button" id="btn4"class="btn btn-dark" style="margin-top: 10px;"></button>
+          <button type="button" id="btnok"class="btn btn-dark" style="margin-top: 10px;">OK</button>
+      </div>
+          
+    </div>
+  </div>    
+  </div>
+
+  <div id="terminar" style="display: none;">
+    <div class="card" style="background-color: #606060; min-height: 95%; margin-right: 2.5%; margin-left: 2.5%; max-width: 100%">
+      <div class="card-body">
+        <h1 class="card-title text-center" style="color: #fff; font-size: 24px" id="final">oi</h1>
+        <br>
+        <div id="pontosF">
+        <h1 class="card-title text-center" style="color: #fff; font-size: 18px" >Seus pontos positivos são:</h1>
+        <ul class="list-group" id="pontosfortes">
+          
+        </ul>  
+        </div>
+        <br>
+        <div id="pontosF2">
+        <h1 class="card-title text-center" style="color: #fff; font-size: 18px">Seus pontos negativos são:</h1>
+        <ul class="list-group" id="pontosfracos">
+          
+        </ul>  
+        </div>
+        
+        
+        
+        
+            
+      </div>
+    </div>    
+  </div>
+
+  
+</body>
+</html>
